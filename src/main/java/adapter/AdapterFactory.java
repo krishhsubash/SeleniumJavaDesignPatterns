@@ -33,9 +33,9 @@ public class AdapterFactory {
     /**
      * Create adapter for specified framework type
      *
-     * @param frameworkType Framework type (selenium, playwright)
-     * @param browserType Browser type (chrome, firefox, edge, webkit)
-     * @param headless Whether to run in headless mode
+     * @param frameworkType Framework type (selenium, playwright, appium)
+     * @param browserType Browser type (chrome, firefox, edge, webkit) or device type (android, ios)
+     * @param headless Whether to run in headless mode (not applicable for mobile)
      * @return WebAutomationAdapter instance
      * @throws IllegalArgumentException if framework type is not supported
      */
@@ -43,6 +43,12 @@ public class AdapterFactory {
         WebAutomationAdapter adapter;
 
         switch (frameworkType.toLowerCase()) {
+            case "appium":
+            case "mobile":
+                System.out.println("✓ AdapterFactory: Creating Appium adapter");
+                adapter = new AppiumAdapter();
+                break;
+
             case "playwright":
                 System.out.println("✓ AdapterFactory: Creating Playwright adapter");
                 adapter = new PlaywrightAdapter();
@@ -56,7 +62,7 @@ public class AdapterFactory {
                 break;
         }
 
-        // Initialize browser
+        // Initialize browser/device
         adapter.initializeBrowser(browserType, headless);
 
         return adapter;
@@ -76,11 +82,14 @@ public class AdapterFactory {
      * Create adapter with specified framework, default browser and mode
      * Browser: Chrome, Headless: false
      *
-     * @param frameworkType Framework type (selenium, playwright)
+     * @param frameworkType Framework type (selenium, playwright, appium)
      * @return WebAutomationAdapter instance
      */
     public static WebAutomationAdapter createAdapter(String frameworkType) {
-        return createAdapter(frameworkType, "chrome", false);
+        String defaultDevice = frameworkType.equalsIgnoreCase("appium") || frameworkType.equalsIgnoreCase("mobile")
+                ? "android"
+                : "chrome";
+        return createAdapter(frameworkType, defaultDevice, false);
     }
 
     /**
@@ -100,7 +109,7 @@ public class AdapterFactory {
      * @return Array of supported framework names
      */
     public static String[] getSupportedFrameworks() {
-        return new String[]{"selenium", "playwright"};
+        return new String[]{"selenium", "playwright", "appium"};
     }
 
     /**
@@ -118,4 +127,5 @@ public class AdapterFactory {
         return false;
     }
 }
+
 

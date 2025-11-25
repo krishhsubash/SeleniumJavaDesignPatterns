@@ -14,6 +14,7 @@ import driver.ConfigReader;
  * - grid: Run tests on Selenium Grid
  * - docker: Run tests in Docker containers
  * - ci: Run tests in CI/CD pipelines
+ * - mobile: Run mobile tests using Appium (Android/iOS)
  *
  * Configuration:
  * Set 'execution.environment' in config.properties
@@ -36,7 +37,7 @@ public class ExecutionStrategyFactory {
     /**
      * Get execution strategy for a specific environment
      *
-     * @param environment Environment name (local, cloud, grid, docker, ci)
+     * @param environment Environment name (local, cloud, grid, docker, ci, mobile)
      * @return ExecutionStrategy instance
      */
     public static ExecutionStrategy getStrategy(String environment) {
@@ -60,6 +61,11 @@ public class ExecutionStrategyFactory {
             case "ci":
             case "cicd":
                 return new CIExecutionStrategy();
+
+            case "mobile":
+            case "appium":
+                System.out.println("✓ ExecutionStrategyFactory: Creating Mobile execution strategy");
+                return new MobileExecutionStrategy();
 
             default:
                 System.out.println("⚠️  Unknown environment: " + environment +
@@ -89,9 +95,9 @@ public class ExecutionStrategyFactory {
         System.out.println("3. grid   - Run on Selenium Grid");
         System.out.println("4. docker - Run in Docker containers");
         System.out.println("5. ci     - Run in CI/CD pipelines");
+        System.out.println("6. mobile - Run mobile tests (Appium)");
         System.out.println("========================================");
         System.out.println("Current: " + getCurrentEnvironment());
         System.out.println("========================================");
     }
 }
-
